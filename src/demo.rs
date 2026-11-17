@@ -18,9 +18,10 @@ use crate::app::App;
 use crate::event::{Event, Kind};
 use crate::ui;
 
-/// Frame at which the demo ends and the process exits (~20s at the ~10fps
-/// ambient cadence).
-const END_FRAME: u64 = 205;
+/// Frame at which the demo ends and the process exits (~25s at the ~10fps
+/// ambient cadence). The creature parade runs through ~frame 175; the dashboard
+/// leg then plays out before the tour returns to the creature and quits.
+const END_FRAME: u64 = 249;
 
 /// Build one synthetic event with a shell id and optional command / exit / cwd.
 fn ev(kind: Kind, shell: &str, cmd: Option<&str>, code: Option<i32>, pwd: Option<&str>) -> Event {
@@ -87,6 +88,54 @@ fn timeline() -> Vec<(u64, Event)> {
     ]
 }
 
+/// A scripted dashboard action, applied by frame once the creature parade is
+/// done. Unlike the mood timeline (synthetic shell events), these drive the
+/// companion's own view state through the same methods the keybindings call.
+#[derive(Clone, Copy)]
+enum DashStep {
+    /// Pop open the info dashboard.
+    Open,
+    /// Advance the focused pane.
+    Next,
+    /// Cycle the pane layout (sidebar → grid → columns …).
+    CycleLayout,
+    /// Hide/show the creature strip atop the dashboard.
+    ToggleStrip,
+    /// Return to the ambient creature.
+    Exit,
+}
+
+fn apply_dash(app: &mut App, step: DashStep) {
+    match step {
+        DashStep::Open => app.open_dashboard(),
+        DashStep::Next => app.dashboard_next(),
+        DashStep::CycleLayout => app.dashboard_cycle_layout(),
+        DashStep::ToggleStrip => app.dashboard_toggle_strip(),
+        DashStep::Exit => app.exit_dashboard(),
+    }
+}
+
+/// The dashboard leg of the tour: `(at_frame, step)`, strictly increasing.
+///
+/// After the creature settles from its caffeinated burst (~frame 175) it pops
+/// open the dashboard, walks a couple of panes, cycles the layout twice to show
+/// the grid and columns, flashes the creature strip off and back on, then exits
+/// to the creature for a calm ending. Steps are spaced ~8 frames (~0.8s) apart
+/// so each lands visibly on camera at the ~10fps cadence.
+fn dashboard_script() -> Vec<(u64, DashStep)> {
+    use DashStep::{CycleLayout, Exit, Next, Open, ToggleStrip};
+    vec![
+        (185, Open),
+        (193, Next),
+        (201, Next),
+        (209, CycleLayout),
+        (217, CycleLayout),
+        (225, ToggleStrip),
+        (233, ToggleStrip),
+        (241, Exit),
+    ]
+}
+
 /// Run the scripted demo, restoring the terminal cleanly on exit. Press `q`,
 /// `Esc`, or `Ctrl-C` to bail early.
 pub fn run() -> io::Result<()> {
@@ -98,17 +147,24 @@ pub fn run() -> io::Result<()> {
     );
 
     let script = timeline();
+    let dash = dashboard_script();
     let mut app = App::new();
     let mut terminal = crate::setup()?;
-    let result = drive(&mut terminal, &mut app, &script);
+    let result = drive(&mut terminal, &mut app, &script, &dash);
     crate::teardown(&mut terminal)?;
     result
 }
 
 /// The demo's event loop: apply any events due this frame, draw, and advance on
 /// the same steady cadence the real companion uses.
-fn drive(terminal: &mut crate::Tui, app: &mut App, script: &[(u64, Event)]) -> io::Result<()> {
+fn drive(
+    terminal: &mut crate::Tui,
+    app: &mut App,
+    script: &[(u64, Event)],
+    dash: &[(u64, DashStep)],
+) -> io::Result<()> {
     let mut next = 0usize;
+    let mut next_dash = 0usize;
     let mut last_step = Instant::now();
 
     while !app.should_quit && app.frame < END_FRAME {
@@ -116,6 +172,11 @@ fn drive(terminal: &mut crate::Tui, app: &mut App, script: &[(u64, Event)]) -> i
         while next < script.len() && script[next].0 <= app.frame {
             app.apply_event(script[next].1.clone());
             next += 1;
+        }
+        // Then any dashboard actions due this frame.
+        while next_dash < dash.len() && dash[next_dash].0 <= app.frame {
+            apply_dash(app, dash[next_dash].1);
+            next_dash += 1;
         }
         terminal.draw(|f| ui::draw(f, app))?;
 
@@ -144,7 +205,7 @@ fn drive(terminal: &mut crate::Tui, app: &mut App, script: &[(u64, Event)]) -> i
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::app::Flair;
+    use crate::app::{Flair, Mode};
     use crate::mood::Mood;
 
     #[test]
@@ -156,6 +217,40 @@ mod tests {
             "timeline must be sorted by frame"
         );
         assert!(t.last().unwrap().0 < END_FRAME);
+    }
+
+    #[test]
+    fn the_dashboard_leg_is_ordered_and_opens_then_returns() {
+        let dash = dashboard_script();
+        assert!(!dash.is_empty());
+        assert!(
+            dash.windows(2).all(|w| w[0].0 <= w[1].0),
+            "dashboard script must be sorted by frame"
+        );
+        // It plays out after the creature parade and finishes before the
+        // deadline, leaving frames to show the creature again at the end.
+        assert!(dash.first().unwrap().0 > timeline().last().unwrap().0);
+        assert!(dash.last().unwrap().0 < END_FRAME);
+
+        // Replaying it must actually land in the dashboard mid-tour and come
+        // back to the ambient creature by the end, so the recording shows both.
+        let mut app = App::new();
+        let mut next = 0usize;
+        let mut saw_dashboard = false;
+        while app.frame < END_FRAME {
+            while next < dash.len() && dash[next].0 <= app.frame {
+                apply_dash(&mut app, dash[next].1);
+                next += 1;
+            }
+            saw_dashboard |= app.mode() == Mode::Dashboard;
+            app.step();
+        }
+        assert!(saw_dashboard, "dashboard leg never entered the dashboard");
+        assert_eq!(
+            app.mode(),
+            Mode::Ambient,
+            "demo should end back on the creature"
+        );
     }
 
     /// Replaying the timeline through a fresh `App` must actually reach every
