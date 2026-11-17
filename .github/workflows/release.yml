@@ -137,7 +137,7 @@ jobs:
         if: steps.gate.outputs.skip == 'false'
         uses: actions/checkout@v4
         with:
-          repository: punitmishra/homebrew-termling
+          repository: termling/homebrew-termling
           token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
           path: tap
       - name: Generate & push formula
@@ -145,7 +145,7 @@ jobs:
         run: |
           set -euo pipefail
           version="${GITHUB_REF_NAME#v}"
-          base="https://github.com/punitmishra/termling/releases/download/${GITHUB_REF_NAME}"
+          base="https://github.com/termling/termling/releases/download/${GITHUB_REF_NAME}"
           sha() { cut -d' ' -f1 "dist/termling-${version}-$1.tar.gz.sha256"; }
           sha_arm="$(sha aarch64-apple-darwin)"
           sha_linux="$(sha x86_64-unknown-linux-gnu)"
@@ -154,7 +154,7 @@ jobs:
           cat > tap/Formula/termling.rb <<EOF
           class Termling < Formula
             desc "Tiny mood creature + arcade that lives beside your real zsh"
-            homepage "https://github.com/punitmishra/termling"
+            homepage "https://github.com/termling/termling"
             version "${version}"
             license "MIT"
 

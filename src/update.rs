@@ -12,9 +12,9 @@ use std::process::Command;
 /// The version compiled into this binary.
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 
-const REPO: &str = "punitmishra/termling";
+const REPO: &str = "termling/termling";
 const INSTALLER: &str =
-    "curl -fsSL https://raw.githubusercontent.com/punitmishra/termling/main/scripts/install.sh | sh";
+    "curl -fsSL https://raw.githubusercontent.com/termling/termling/main/scripts/install.sh | sh";
 
 /// How this binary was installed — determines how we update it.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

@@ -1,7 +1,7 @@
 #!/bin/sh
 # termling installer — download a prebuilt binary and drop it in your PATH.
 #
-#   curl -fsSL https://raw.githubusercontent.com/punitmishra/termling/main/scripts/install.sh | sh
+#   curl -fsSL https://raw.githubusercontent.com/termling/termling/main/scripts/install.sh | sh
 #
 # No sudo: installs to ${TERMLING_INSTALL_DIR:-$HOME/.local/bin}. This is the
 # ONLY part of termling that touches the network — the binary itself never does.
@@ -10,7 +10,7 @@
 # weather/stocks/news/dev-news/ai panes; still off until you set TERMLING_ONLINE=1).
 set -eu
 
-REPO="punitmishra/termling"
+REPO="termling/termling"
 BIN="termling"
 
 err() {
