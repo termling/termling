@@ -1,9 +1,9 @@
 # termling
 
-[![CI](https://github.com/punitmishra/termling/actions/workflows/ci.yml/badge.svg)](https://github.com/punitmishra/termling/actions/workflows/ci.yml)
+[![CI](https://github.com/termling/termling/actions/workflows/ci.yml/badge.svg)](https://github.com/termling/termling/actions/workflows/ci.yml)
 [![crates.io](https://img.shields.io/crates/v/termling.svg)](https://crates.io/crates/termling)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Release](https://img.shields.io/github/v/release/punitmishra/termling?display_name=tag&sort=semver)](https://github.com/punitmishra/termling/releases)
+[![Release](https://img.shields.io/github/v/release/termling/termling?display_name=tag&sort=semver)](https://github.com/termling/termling/releases)
 
 > An animated ASCII creature that lives *beside* your shell and reacts to how
 > your commands go — shifting moods, earning XP, and hiding a little arcade for
@@ -70,7 +70,7 @@ below):
 > Rust toolchain can always install from the repo today:
 >
 > ```sh
-> cargo install --git https://github.com/punitmishra/termling
+> cargo install --git https://github.com/termling/termling
 > ```
 >
 > That puts `termling` on your `PATH` (in `~/.cargo/bin`) — and it's the path for
@@ -80,7 +80,7 @@ below):
 **One-line installer** (macOS & Linux, no sudo — installs to `~/.local/bin`):
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/punitmishra/termling/main/scripts/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/termling/termling/main/scripts/install.sh | sh
 ```
 
 It detects your OS/arch, downloads the matching release tarball, verifies its
@@ -91,7 +91,7 @@ the binary itself never does.
 **Homebrew** — _pending publish_ (needs the `HOMEBREW_TAP_TOKEN` secret; macOS & Linux):
 
 ```sh
-brew install punitmishra/termling/termling
+brew install termling/termling/termling
 ```
 
 **Cargo** — _pending publish_ (needs the `CARGO_REGISTRY_TOKEN` secret; until then use `cargo install --git …` above):
@@ -101,7 +101,7 @@ cargo install termling
 ```
 
 **Prebuilt binaries** — download the tarball for your platform from the
-[latest release](https://github.com/punitmishra/termling/releases/latest), then
+[latest release](https://github.com/termling/termling/releases/latest), then
 drop `termling` anywhere on your `PATH`:
 
 ```sh
@@ -112,7 +112,7 @@ install -m 0755 termling /usr/local/bin/     # or ~/.local/bin
 **From source:**
 
 ```sh
-git clone https://github.com/punitmishra/termling
+git clone https://github.com/termling/termling
 cd termling
 cargo install --path .                        # onto PATH (~/.cargo/bin), no sudo
 # …or just build it and run in place:
@@ -498,9 +498,9 @@ gates, both off by default**:
    either grab the prebuilt online binary or build it yourself:
    ```sh
    # prebuilt online binary via the installer:
-   curl -fsSL https://raw.githubusercontent.com/punitmishra/termling/main/scripts/install.sh | TERMLING_INSTALL_ONLINE=1 sh
+   curl -fsSL https://raw.githubusercontent.com/termling/termling/main/scripts/install.sh | TERMLING_INSTALL_ONLINE=1 sh
    # …or build it:
-   cargo install --features online --git https://github.com/punitmishra/termling
+   cargo install --features online --git https://github.com/termling/termling
    ```
    A stock (default) build compiles none of this and pulls no network deps.
 2. Opt in at runtime: `TERMLING_ONLINE=1`. Without it, the online panes stay
@@ -602,7 +602,7 @@ hackable. Some good first PRs, roughly by area:
 To get set up:
 
 ```sh
-git clone https://github.com/punitmishra/termling
+git clone https://github.com/termling/termling
 cd termling
 cargo run -- --preview     # eyeball the art without a socket or a pane
 cargo test                 # the suite is fast and dependency-light
@@ -638,9 +638,9 @@ That fires `.github/workflows/release.yml`, which:
    prebuilt-tarball instructions work.
 3. **Publishes to crates.io** — only if the `CARGO_REGISTRY_TOKEN` repo secret is
    set (else skipped), which lights up `cargo install termling`.
-4. **Bumps the Homebrew formula** in the `punitmishra/homebrew-termling` tap —
+4. **Bumps the Homebrew formula** in the `termling/homebrew-termling` tap —
    only if the `HOMEBREW_TAP_TOKEN` secret is set (else skipped), which lights up
-   `brew install punitmishra/termling/termling`.
+   `brew install termling/termling/termling`.
 
 So a tag with neither secret still gives working `curl`/tarball installs; add
 `CARGO_REGISTRY_TOKEN` for crates.io and `HOMEBREW_TAP_TOKEN` for Homebrew. Keep
