@@ -13,3 +13,6 @@
 
 # Local git worktrees used for parallel workstreams
 .claude/worktrees/
+
+# Playwright MCP scratch output
+.playwright-mcp/

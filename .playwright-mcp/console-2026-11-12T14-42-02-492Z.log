@@ -1,6 +1,0 @@
-[393661580ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://github.com/termling/termling#readme:1
-[393662344ms] [ERROR] Access to fetch at 'https://api.github.com/_private/browser/stats' from origin 'https://github.com' has been blocked by CORS policy: The value of the 'Access-Control-Allow-Origin' header in the response must not be the wildcard '*' when the request's credentials mode is 'include'. @ https://github.com/termling/termling#readme:1
-[393662345ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://api.github.com/_private/browser/stats:1
-[393662345ms] [ERROR] Oversized browser stats delivery failed @ https://github.githubassets.com/assets/app-runtime-71942c701f238754.js:2
-[393664345ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://github.com/termling/termling#readme:1
-[393666186ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://github.com/termling/termling/releases:1
