@@ -17,7 +17,9 @@
 mod bg;
 mod buddy_insights;
 mod clock;
+mod disk;
 mod git;
+mod processes;
 mod system;
 
 use std::path::PathBuf;
@@ -53,6 +55,10 @@ pub enum PaneKind {
     System,
     /// A read-only window onto the buddy brain's learned habits.
     BuddyInsights,
+    /// The top CPU-consuming local processes (via `ps`).
+    Processes,
+    /// Local filesystem usage (via `df`).
+    Disk,
     /// Current conditions from Open-Meteo.
     #[cfg(feature = "online")]
     Weather,
@@ -81,6 +87,8 @@ impl PaneKind {
             PaneKind::Clock,
             PaneKind::System,
             PaneKind::BuddyInsights,
+            PaneKind::Processes,
+            PaneKind::Disk,
         ];
         #[cfg(feature = "online")]
         {
@@ -103,6 +111,8 @@ impl PaneKind {
             "clock" => Some(PaneKind::Clock),
             "system" => Some(PaneKind::System),
             "buddy" => Some(PaneKind::BuddyInsights),
+            "processes" => Some(PaneKind::Processes),
+            "disk" => Some(PaneKind::Disk),
             #[cfg(feature = "online")]
             "weather" => Some(PaneKind::Weather),
             #[cfg(feature = "online")]
@@ -125,6 +135,8 @@ impl PaneKind {
             PaneKind::Clock => "clock",
             PaneKind::System => "system",
             PaneKind::BuddyInsights => "buddy",
+            PaneKind::Processes => "processes",
+            PaneKind::Disk => "disk",
             #[cfg(feature = "online")]
             PaneKind::Weather => "weather",
             #[cfg(feature = "online")]
@@ -146,6 +158,8 @@ impl PaneKind {
             PaneKind::Clock => false,
             PaneKind::System => false,
             PaneKind::BuddyInsights => false,
+            PaneKind::Processes => false,
+            PaneKind::Disk => false,
             #[cfg(feature = "online")]
             PaneKind::Weather
             | PaneKind::Stocks
@@ -163,6 +177,8 @@ impl PaneKind {
             PaneKind::Clock => Box::new(clock::ClockPane::new()),
             PaneKind::System => Box::new(system::SystemPane::new()),
             PaneKind::BuddyInsights => Box::new(buddy_insights::BuddyPane::new()),
+            PaneKind::Processes => Box::new(processes::ProcessesPane::new()),
+            PaneKind::Disk => Box::new(disk::DiskPane::new()),
             #[cfg(feature = "online")]
             PaneKind::Weather => Box::new(weather::Weather::new()),
             #[cfg(feature = "online")]
