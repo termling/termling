@@ -97,19 +97,32 @@ impl Character {
         }
     }
 
-    /// Top of the head — ears, antenna, dome. Centered over the eyes.
+    /// Top of the head — ears, antenna, dome. Centered over the eyes (which sit
+    /// at face cols 2 & 7, so a 6-wide top lands its outer glyphs right over the
+    /// eyes). Each silhouette is tuned to read as its own species at a glance.
     fn top(self) -> &'static str {
         match self {
+            // Smooth rounded dome.
             Character::Blob => "╭──────╮",
-            Character::Cat => "╭◤╮╭◥╮",
-            Character::Robot => "╭┬────┬╮",
+            // Two pointed ears with a gap between them.
+            Character::Cat => "╱╲  ╱╲",
+            // Boxy head flush to the walls with a pair of antenna stubs.
+            Character::Robot => "┌──┬┬──┐",
+            // A clean domed sheet.
             Character::Ghost => "╭──────╮",
+            // Tufted ears bridged by a flat brow.
             Character::Fox => "╱╲────╱╲",
-            Character::Comet => "✦╭───╮",
-            Character::StarSprite => "╭─✦─╮",
-            Character::Mixtape => "╭─◕──◕─╮",
-            Character::TubeBoy => "╭─◦──◦─╮",
-            Character::Jellyfish => "╭◠◡◠◡╮",
+            // Round head flanked by trailing sparkles.
+            Character::Comet => "✦╭──╮✦",
+            // A little crown set with two star jewels.
+            Character::StarSprite => "╭✦──✦╮",
+            // Cassette shell with two tape reels.
+            Character::Mixtape => "┌─◕──◕─┐",
+            // TV cabinet with a rabbit-ear aerial.
+            Character::TubeBoy => "┌──╱╲──┐",
+            // A scalloped jelly bell.
+            Character::Jellyfish => "╭◠◠◠◠╮",
+            // A domed head between two horns.
             Character::Dragon => "^╭──╮^",
         }
     }
@@ -117,32 +130,63 @@ impl Character {
     /// The base line the creature sits on.
     fn base(self) -> &'static str {
         match self {
-            Character::Blob => "╰─◡──◡─╯",
+            // Smooth rounded underside.
+            Character::Blob => "╰──────╯",
+            // Rounded chin.
             Character::Cat => "╰─◡◡─╯",
-            Character::Robot => "╰─●──●─╯",
+            // Boxy bottom standing on two bolt feet.
+            Character::Robot => "└─●──●─┘",
+            // Wavy ghost tail.
             Character::Ghost => "◡◡◡◡◡◡◡◡",
-            Character::Fox => "╰──◡◡──╯",
+            // A pointed snout dipping down between the paws.
+            Character::Fox => "╰─╲╱─╯",
+            // Motion streaks trailing off the tail.
             Character::Comet => "╰╲╲╲─╯",
-            Character::StarSprite => "╰╱●╲╯",
-            Character::Mixtape => "╰─◦──◦─╯",
-            Character::TubeBoy => "╰┬────┬╯",
+            // A sparkle cradled in the base.
+            Character::StarSprite => "╰╱✦╲╯",
+            // Reel holes echoed along the bottom.
+            Character::Mixtape => "└─◦──◦─┘",
+            // Two little stand feet.
+            Character::TubeBoy => "└┴────┴┘",
+            // A fringe of dangling tentacles.
             Character::Jellyfish => "╰┈┈┈┈╯",
-            Character::Dragon => "╰─~~─╯",
+            // A spiky zigzag underbelly.
+            Character::Dragon => "╰╱╲╱╲╯",
         }
     }
 
     /// The left/right body walls framing the eyes and mouth.
     fn sides(self) -> (char, char) {
         match self {
+            // Twinkling walls for the star sprite.
             Character::StarSprite => ('◦', '◦'),
-            // Boxy 8-wide bodies get straight walls that line up with the corners.
-            Character::Robot
-            | Character::Ghost
-            | Character::Fox
-            | Character::Mixtape
-            | Character::TubeBoy => ('│', '│'),
-            // Blob, Cat, Comet, Jellyfish, Dragon — soft rounded parenthesis walls.
+            // The ghost has no walls at all — a bare, floaty face.
+            Character::Ghost => (' ', ' '),
+            // Boxy bodies get straight walls that line up with the corners.
+            Character::Robot | Character::Mixtape | Character::TubeBoy => ('│', '│'),
+            // Blob, Cat, Fox, Comet, Jellyfish, Dragon — soft parenthesis walls.
             _ => ('(', ')'),
+        }
+    }
+
+    /// The cheek glyph flanking the eyes (face cols 1 & 8), painted in the accent
+    /// color — a subtle, per-species flavor layered *around* the mood's eyes. The
+    /// default is a faint blush dot; the ghost drops it for a bare face and the
+    /// star sprite twinkles instead.
+    fn cheeks(self) -> char {
+        match self {
+            Character::Ghost => ' ',
+            Character::StarSprite => '◦',
+            _ => '·',
+        }
+    }
+
+    /// Glyphs tucked just inside the walls on the mouth line (face cols 1 & 8),
+    /// in the accent color. The default is empty; the cat wears whiskers here.
+    fn mouth_frame(self) -> (char, char) {
+        match self {
+            Character::Cat => ('-', '-'),
+            _ => (' ', ' '),
         }
     }
 
@@ -250,8 +294,16 @@ pub fn render(mood: Mood, character: Character, frame: u64) -> Doodle {
     place_particles(&mut fg[5], &e.bot, p.accent);
     let left = face_left(e.jit);
     place_face(&mut fg[1], left, &center_cells(character.top(), p.base));
-    place_face(&mut fg[2], left, &eyes_cells(&e.le, &e.re, (l, r), &p));
-    place_face(&mut fg[3], left, &mouth_cells(&e.mouth, (l, r), &p));
+    place_face(
+        &mut fg[2],
+        left,
+        &eyes_cells(&e.le, &e.re, (l, r), character.cheeks(), &p),
+    );
+    place_face(
+        &mut fg[3],
+        left,
+        &mouth_cells(&e.mouth, (l, r), character.mouth_frame(), &p),
+    );
     place_face(&mut fg[4], left, &center_cells(character.base(), p.base));
 
     // Backdrop, composited underneath.
@@ -543,41 +595,55 @@ fn place_particles(row: &mut [Cell], tpl: &str, accent: Color) {
     }
 }
 
-/// The eye line as `FACE` cells: walls in base, pupils in eye color, and two
-/// faint blush dots on the cheeks (cols 1 & 8) in the accent color — a cheap,
+/// The eye line as `FACE` cells: walls in base, pupils in eye color, and the
+/// per-character `cheek` glyph on cols 1 & 8 in the accent color — a cheap,
 /// high-impact cuteness lever that frames the eyes without competing with them.
-fn eyes_cells(le: &str, re: &str, (l, r): (char, char), p: &Palette) -> Vec<(char, Color)> {
+/// The mood still drives the eyes; the cheeks only add species flavor around them.
+fn eyes_cells(
+    le: &str,
+    re: &str,
+    (l, r): (char, char),
+    cheek: char,
+    p: &Palette,
+) -> Vec<(char, Color)> {
     let le = le.chars().next().unwrap_or('o');
     let re = re.chars().next().unwrap_or('o');
     vec![
         (l, p.base),
-        ('·', p.accent),
+        (cheek, p.accent),
         (le, p.eye),
         (' ', p.base),
         (' ', p.base),
         (' ', p.base),
         (' ', p.base),
         (re, p.eye),
-        ('·', p.accent),
+        (cheek, p.accent),
         (r, p.base),
     ]
 }
 
-/// The mouth line as `FACE` cells: walls in base, mouth in its color.
-fn mouth_cells(m: &str, (l, r): (char, char), p: &Palette) -> Vec<(char, Color)> {
+/// The mouth line as `FACE` cells: walls in base, mouth in its color, and the
+/// per-character `frame` glyphs tucked just inside the walls (cols 1 & 8) in the
+/// accent color — species flavor (e.g. a cat's whiskers) around the mood's mouth.
+fn mouth_cells(
+    m: &str,
+    (l, r): (char, char),
+    (fl, fr): (char, char),
+    p: &Palette,
+) -> Vec<(char, Color)> {
     let mut mc = m.chars();
     let m0 = mc.next().unwrap_or(' ');
     let m1 = mc.next().unwrap_or(' ');
     vec![
         (l, p.base),
-        (' ', p.base),
+        (fl, p.accent),
         (' ', p.base),
         (' ', p.base),
         (m0, p.mouth),
         (m1, p.mouth),
         (' ', p.base),
         (' ', p.base),
-        (' ', p.base),
+        (fr, p.accent),
         (r, p.base),
     ]
 }
