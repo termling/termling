@@ -91,11 +91,14 @@ the binary itself never does.
 **Homebrew** (macOS & Linux):
 
 ```sh
-brew install termling/termling/termling
+brew tap termling/termling
+brew install termling
 ```
 
-(Automated formula bumps on future releases need the `HOMEBREW_TAP_TOKEN` secret;
-the `0.1.2` formula was published manually in the meantime.)
+(Newer Homebrew may ask you to run `brew trust termling/termling` once; or skip the
+tap with a single `brew install termling/termling/termling`. Automated formula bumps
+on future releases need the `HOMEBREW_TAP_TOKEN` secret; the `0.1.2` formula was
+published manually in the meantime.)
 
 **Cargo** — _pending publish_ (needs the `CARGO_REGISTRY_TOKEN` secret; until then use `cargo install --git …` above):
 
