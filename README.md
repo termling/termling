@@ -62,12 +62,12 @@ pane is this program.
 Grab the binary one of these ways, then wire up the shell hook (**Quick start**,
 below):
 
-> **Released.** The **one-line installer** and **prebuilt tarballs** below work
-> (macOS Apple Silicon + x86_64 Linux; a default and an `-online` variant each).
-> **Homebrew** and `cargo install termling` are marked _“pending publish”_ — the
-> release pipeline is wired for both but they stay dark until the maintainer adds
-> the crates.io / Homebrew-tap tokens (see **Releasing**). Any platform with a
-> Rust toolchain can always install from the repo today:
+> **Released.** The **one-line installer**, **Homebrew**, and **prebuilt tarballs**
+> below all work (macOS Apple Silicon + x86_64 Linux; a default and an `-online`
+> variant each). Only `cargo install termling` (crates.io) is still _“pending
+> publish”_ — it stays dark until the maintainer adds the `CARGO_REGISTRY_TOKEN`
+> (see **Releasing**). Any platform with a Rust toolchain can always install from
+> the repo today:
 >
 > ```sh
 > cargo install --git https://github.com/termling/termling
@@ -88,11 +88,14 @@ SHA-256, and drops `termling` in `${TERMLING_INSTALL_DIR:-$HOME/.local/bin}`.
 This installer script is the *only* part of termling that touches the network;
 the binary itself never does.
 
-**Homebrew** — _pending publish_ (needs the `HOMEBREW_TAP_TOKEN` secret; macOS & Linux):
+**Homebrew** (macOS & Linux):
 
 ```sh
 brew install termling/termling/termling
 ```
+
+(Automated formula bumps on future releases need the `HOMEBREW_TAP_TOKEN` secret;
+the `0.1.2` formula was published manually in the meantime.)
 
 **Cargo** — _pending publish_ (needs the `CARGO_REGISTRY_TOKEN` secret; until then use `cargo install --git …` above):
 
@@ -617,10 +620,10 @@ on the shape.
 
 ## Releasing
 
-termling has no published release yet, which is why `brew install …`, `cargo
-install termling`, the `curl` one-liner, and the prebuilt tarballs don't work
-yet (install from the repo in the meantime — see **Install**). Cutting a release
-is just pushing a tag:
+As of v0.1.2 the release is published: the `curl` one-liner, the prebuilt
+tarballs, and **Homebrew** (`brew install termling/termling/termling`) all work.
+Only `cargo install termling` (crates.io) is still pending a token. Cutting a
+release is pushing a tag:
 
 ```sh
 cargo test && cargo clippy --all-targets -- -D warnings   # green first
@@ -629,22 +632,25 @@ git tag vX.Y.Z && git push origin vX.Y.Z                   # matches Cargo.toml'
 
 That fires `.github/workflows/release.yml`, which:
 
-1. **Builds** release tarballs for Apple-Silicon macOS (`aarch64`) and `x86_64`
-   Linux — **two per platform**, a default (zero-network) and an `-online`
-   (`--features online`) variant — each with a `.sha256`. (Intel macOS is
-   currently dropped; those users `cargo install --git …` or build from source.)
-2. **Cuts the GitHub Release** with those assets — this alone makes the `curl`
-   one-liner (and `TERMLING_INSTALL_ONLINE=1` for the online build) and the
+1. **Builds** the `x86_64` Linux tarballs — **two**, a default (zero-network) and
+   an `-online` (`--features online`) variant — each with a `.sha256`. (The
+   Apple-Silicon macOS tarballs are built locally by the maintainer and attached
+   to the release — the `termling` org has no hosted macOS runners yet; Intel
+   macOS is likewise unpublished, so those users `cargo install --git …` or build
+   from source.)
+2. **Cuts the GitHub Release** — this plus the attached macOS tarballs makes the
+   `curl` one-liner (and `TERMLING_INSTALL_ONLINE=1` for the online build) and the
    prebuilt-tarball instructions work.
 3. **Publishes to crates.io** — only if the `CARGO_REGISTRY_TOKEN` repo secret is
    set (else skipped), which lights up `cargo install termling`.
-4. **Bumps the Homebrew formula** in the `termling/homebrew-termling` tap —
-   only if the `HOMEBREW_TAP_TOKEN` secret is set (else skipped), which lights up
-   `brew install termling/termling/termling`.
+4. **Bumps the Homebrew formula** in the `termling/homebrew-termling` tap — only
+   if the `HOMEBREW_TAP_TOKEN` secret is set (else skipped). The `0.1.2` formula
+   was published manually; set the token to automate future bumps.
 
-So a tag with neither secret still gives working `curl`/tarball installs; add
-`CARGO_REGISTRY_TOKEN` for crates.io and `HOMEBREW_TAP_TOKEN` for Homebrew. Keep
-`Cargo.toml`'s `version` in step with the tag.
+So a tag with neither secret still gives working `curl`/tarball/brew installs
+(brew via the manually-pushed formula); add `CARGO_REGISTRY_TOKEN` for crates.io
+and `HOMEBREW_TAP_TOKEN` to automate formula bumps. Keep `Cargo.toml`'s `version`
+in step with the tag.
 
 ## License
 
