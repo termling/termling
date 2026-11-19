@@ -19,11 +19,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-14
-            target: aarch64-apple-darwin
-          # Intel macOS (macos-13) is dropped: its hosted runners are heavily
-          # backlogged and block the whole release. Intel-mac users can
-          # `cargo install --git …` or build from source until it's restored.
+          # macOS (aarch64-apple-darwin) is built by the maintainer locally and
+          # attached to the release: the termling org's hosted macOS runners are
+          # not currently available ("The configuration 'macos-14-...' is not
+          # supported"). Re-add `- os: macos-14 / target: aarch64-apple-darwin`
+          # here once org-hosted macOS runners are enabled in org settings.
+          # Intel macOS (macos-13) remains dropped (hosted-runner backlog);
+          # Intel-mac users `cargo install --git …` or build from source.
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
     steps:
