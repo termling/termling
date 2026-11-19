@@ -3,6 +3,20 @@
 All notable changes to termling. This project adheres to [semantic versioning](https://semver.org/)
 (pre-1.0: minor features and fixes land in patch releases).
 
+## 0.1.2
+
+### Added
+- **Processes pane** — a local, zero-network dashboard pane listing the top
+  processes by CPU, refreshed on a timer.
+- **Disk pane** — a local pane showing per-mount disk usage with a usage bar.
+
+### Changed
+- **Distinct, elite creatures** — all 11 characters were resculpted to read as
+  visually distinct, each with per-character face hooks (cheeks and mouth
+  framing) so moods come through clearly.
+- **Scripted demo** now includes a dashboard leg, touring the sidebar panes and
+  split layouts alongside the creature tour.
+
 ## 0.1.1
 
 ### Added
