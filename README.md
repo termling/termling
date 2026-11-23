@@ -1,4 +1,6 @@
-# termling
+<p align="center">
+  <img src="docs/termling-wordmark.gif" alt="termling" width="440">
+</p>
 
 [![CI](https://img.shields.io/github/actions/workflow/status/termling/termling/ci.yml?branch=main&style=for-the-badge&labelColor=111820&color=5EF2C6)](https://github.com/termling/termling/actions/workflows/ci.yml)
 [![crates.io](https://img.shields.io/crates/v/termling?style=for-the-badge&labelColor=111820&color=5EF2C6)](https://crates.io/crates/termling)
