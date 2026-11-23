@@ -1,13 +1,19 @@
 # termling
 
-[![CI](https://github.com/termling/termling/actions/workflows/ci.yml/badge.svg)](https://github.com/termling/termling/actions/workflows/ci.yml)
-[![crates.io](https://img.shields.io/crates/v/termling.svg)](https://crates.io/crates/termling)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Release](https://img.shields.io/github/v/release/termling/termling?display_name=tag&sort=semver)](https://github.com/termling/termling/releases)
+[![CI](https://img.shields.io/github/actions/workflow/status/termling/termling/ci.yml?branch=main&style=for-the-badge&labelColor=111820&color=5EF2C6)](https://github.com/termling/termling/actions/workflows/ci.yml)
+[![crates.io](https://img.shields.io/crates/v/termling?style=for-the-badge&labelColor=111820&color=5EF2C6)](https://crates.io/crates/termling)
+[![Release](https://img.shields.io/github/v/release/termling/termling?display_name=tag&sort=semver&style=for-the-badge&labelColor=111820&color=5EF2C6)](https://github.com/termling/termling/releases)
+[![platform: macOS + Linux](https://img.shields.io/badge/platform-macOS%20%2B%20Linux-5EF2C6?style=for-the-badge&labelColor=111820)](#install)
+[![License: MIT](https://img.shields.io/badge/license-MIT-5EF2C6?style=for-the-badge&labelColor=111820)](LICENSE)
+[![Discord](https://img.shields.io/badge/Discord-join-5865F2?style=for-the-badge&labelColor=111820&logo=discord&logoColor=white)](https://discord.gg/BxzUQ8B2q)
 
-> An animated ASCII creature that lives *beside* your shell and reacts to how
-> your commands go — shifting moods, earning XP, and hiding a little arcade for
-> when the build is slow. **Your shell stays 100% your own.**
+🌐 [Site](https://termling.github.io) · 📦 [Releases](https://github.com/termling/termling/releases) · 💬 [Discord](https://discord.gg/BxzUQ8B2q) · 🤝 [Contributing](#contributing) · 🔒 [Security](#security)
+
+> **Lives beside your shell — never replaces it.** An animated ASCII creature in a
+> pane next to your real shell that reacts to how your commands go: shifting moods,
+> earning XP, and hiding a little arcade for when the build is slow.
+>
+> **Zero network. No LLM. No telemetry. Two dependencies.** Your shell stays 100% your own.
 
 ![termling parading through its moods, levelling up, and switching characters](docs/demo.gif)
 
@@ -153,14 +159,17 @@ piling up. Just start working.
 
 Every command makes the creature react — `focused` while it runs, `toiling` if
 it drags on, then `happy`/`excited` on success or `confused` on failure — and a
-small feed shows your recent commands with a `✓`/`✗`. Kick the tires — run a few
-commands and watch the pane:
+small feed shows your recent commands with a `✓`/`✗`. Watch one play out:
 
 ```sh
-ls && echo works     # ✓ exit 0 → happy, and your success streak climbs
-false                # ✗ exit 1 → confused
-sleep 4              # a long one → toiling, then a finish flourish + a bell
+cargo test     # it fails → the creature slumps to `confused`,
+               #   and the buddy pipes up: "cargo hit exit 1 — you've got this"
+# …you fix the bug…
+cargo test     # ✓ exit 0 → it perks up to `happy`, your streak climbs, XP ticks over
+sleep 4        # a long one → `toiling`, then a finish flourish + a bell
 ```
+
+That's the whole loop: your commands, its moods, and a streak worth keeping.
 
 Companion didn't appear? Run **`termling doctor`** — a quick, network-free check
 that reports your scope, whether a companion is live, whether your terminal can
