@@ -549,6 +549,10 @@ Every frame, `mood::Mood::from_signals` maps a few shell signals to one mood
 
 ## Characters × moods (the creative bit)
 
+![the eleven-creature cast, mid-thought](docs/termling-cast.png)
+
+> The full cast, live and in color, is on the [site](https://termling.github.io/#creatures).
+
 The two ideas are kept **orthogonal**, so they multiply instead of add:
 
 - A **character** (`doodle::Character`) is a *silhouette + palette*: the head
